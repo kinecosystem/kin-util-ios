@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8261EF2B2043DE3B001848CB /* PromiseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8261EF2A2043DE3B001848CB /* PromiseTests.swift */; };
 		82F2FAA1204309E500E754BD /* KinUtil.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82F2FA97204309E500E754BD /* KinUtil.framework */; };
 		82F2FAA6204309E500E754BD /* KinUtilTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F2FAA5204309E500E754BD /* KinUtilTests.swift */; };
 		82F2FAA8204309E500E754BD /* KinUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 82F2FA9A204309E500E754BD /* KinUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -25,6 +26,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8261EF2A2043DE3B001848CB /* PromiseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromiseTests.swift; sourceTree = "<group>"; };
 		82F2FA97204309E500E754BD /* KinUtil.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = KinUtil.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		82F2FA9A204309E500E754BD /* KinUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KinUtil.h; sourceTree = "<group>"; };
 		82F2FA9B204309E500E754BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -85,6 +87,7 @@
 		82F2FAA4204309E500E754BD /* KinUtilTests */ = {
 			isa = PBXGroup;
 			children = (
+				8261EF2A2043DE3B001848CB /* PromiseTests.swift */,
 				82F2FAA5204309E500E754BD /* KinUtilTests.swift */,
 				82F2FAA7204309E500E754BD /* Info.plist */,
 			);
@@ -221,6 +224,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				82F2FAA6204309E500E754BD /* KinUtilTests.swift in Sources */,
+				8261EF2B2043DE3B001848CB /* PromiseTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
