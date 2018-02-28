@@ -1,6 +1,6 @@
 //
 //  Promise.swift
-//  StellarKit
+//  KinUtil
 //
 //  Created by Kin Foundation.
 //  Copyright © 2018 Kin Foundation. All rights reserved.
