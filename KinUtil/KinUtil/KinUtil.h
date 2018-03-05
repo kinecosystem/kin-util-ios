@@ -6,7 +6,7 @@
 //  Copyright © 2018 Kin Foundation. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for KinUtil.
 FOUNDATION_EXPORT double KinUtilVersionNumber;

@@ -10,6 +10,11 @@
 		8261EF2B2043DE3B001848CB /* PromiseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8261EF2A2043DE3B001848CB /* PromiseTests.swift */; };
 		8261EF3620446117001848CB /* String+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8261EF3520446117001848CB /* String+extensions.swift */; };
 		8261EF382044623F001848CB /* Data+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8261EF372044623F001848CB /* Data+extensions.swift */; };
+		82BA2035204D84AA00396AE2 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F2FAB320430A4600E754BD /* Observable.swift */; };
+		82BA2036204D84AA00396AE2 /* Data+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8261EF372044623F001848CB /* Data+extensions.swift */; };
+		82BA2037204D84AA00396AE2 /* String+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8261EF3520446117001848CB /* String+extensions.swift */; };
+		82BA2038204D84AA00396AE2 /* Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F2FAB220430A4600E754BD /* Promise.swift */; };
+		82BA203B204D84AA00396AE2 /* KinUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 82F2FA9A204309E500E754BD /* KinUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		82F2FAA1204309E500E754BD /* KinUtil.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82F2FA97204309E500E754BD /* KinUtil.framework */; };
 		82F2FAA6204309E500E754BD /* KinUtilTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F2FAA5204309E500E754BD /* KinUtilTests.swift */; };
 		82F2FAA8204309E500E754BD /* KinUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 82F2FA9A204309E500E754BD /* KinUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -31,6 +36,8 @@
 		8261EF2A2043DE3B001848CB /* PromiseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromiseTests.swift; sourceTree = "<group>"; };
 		8261EF3520446117001848CB /* String+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+extensions.swift"; sourceTree = "<group>"; };
 		8261EF372044623F001848CB /* Data+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+extensions.swift"; sourceTree = "<group>"; };
+		82BA2040204D84AA00396AE2 /* KinUtil.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = KinUtil.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		82BA2041204D84AB00396AE2 /* KinUtil-macos-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "KinUtil-macos-Info.plist"; path = "/Users/avi/Projects/kin-core-ios/KinSDK/StellarKit/kin-util-ios/KinUtil/KinUtil-macos-Info.plist"; sourceTree = "<absolute>"; };
 		82F2FA97204309E500E754BD /* KinUtil.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = KinUtil.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		82F2FA9A204309E500E754BD /* KinUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KinUtil.h; sourceTree = "<group>"; };
 		82F2FA9B204309E500E754BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -42,6 +49,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		82BA2039204D84AA00396AE2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		82F2FA93204309E500E754BD /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -75,6 +89,7 @@
 				82F2FA99204309E500E754BD /* KinUtil */,
 				82F2FAA4204309E500E754BD /* KinUtilTests */,
 				82F2FA98204309E500E754BD /* Products */,
+				82BA2041204D84AB00396AE2 /* KinUtil-macos-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -83,6 +98,7 @@
 			children = (
 				82F2FA97204309E500E754BD /* KinUtil.framework */,
 				82F2FAA0204309E500E754BD /* KinUtilTests.xctest */,
+				82BA2040204D84AA00396AE2 /* KinUtil.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -120,6 +136,14 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		82BA203A204D84AA00396AE2 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				82BA203B204D84AA00396AE2 /* KinUtil.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		82F2FA94204309E500E754BD /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -131,6 +155,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		82BA2033204D84AA00396AE2 /* KinUtil-macos */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 82BA203D204D84AA00396AE2 /* Build configuration list for PBXNativeTarget "KinUtil-macos" */;
+			buildPhases = (
+				82BA2034204D84AA00396AE2 /* Sources */,
+				82BA2039204D84AA00396AE2 /* Frameworks */,
+				82BA203A204D84AA00396AE2 /* Headers */,
+				82BA203C204D84AA00396AE2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "KinUtil-macos";
+			productName = KinUtil;
+			productReference = 82BA2040204D84AA00396AE2 /* KinUtil.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		82F2FA96204309E500E754BD /* KinUtil */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 82F2FAAB204309E500E754BD /* Build configuration list for PBXNativeTarget "KinUtil" */;
@@ -177,6 +219,9 @@
 				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = "Kin Foundation";
 				TargetAttributes = {
+					82BA2033204D84AA00396AE2 = {
+						ProvisioningStyle = Automatic;
+					};
 					82F2FA96204309E500E754BD = {
 						CreatedOnToolsVersion = 9.2;
 						LastSwiftMigration = 0920;
@@ -202,11 +247,19 @@
 			targets = (
 				82F2FA96204309E500E754BD /* KinUtil */,
 				82F2FA9F204309E500E754BD /* KinUtilTests */,
+				82BA2033204D84AA00396AE2 /* KinUtil-macos */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		82BA203C204D84AA00396AE2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		82F2FA95204309E500E754BD /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -224,6 +277,17 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		82BA2034204D84AA00396AE2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				82BA2035204D84AA00396AE2 /* Observable.swift in Sources */,
+				82BA2036204D84AA00396AE2 /* Data+extensions.swift in Sources */,
+				82BA2037204D84AA00396AE2 /* String+extensions.swift in Sources */,
+				82BA2038204D84AA00396AE2 /* Promise.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		82F2FA92204309E500E754BD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -255,6 +319,57 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		82BA203E204D84AA00396AE2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = Z37J743B3H;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "KinUtil-macos-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kinfoundation.KinUtil;
+				PRODUCT_NAME = KinUtil;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		82BA203F204D84AA00396AE2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = Z37J743B3H;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "KinUtil-macos-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kinfoundation.KinUtil;
+				PRODUCT_NAME = KinUtil;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		82F2FAA9204309E500E754BD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -450,6 +565,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		82BA203D204D84AA00396AE2 /* Build configuration list for PBXNativeTarget "KinUtil-macos" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				82BA203E204D84AA00396AE2 /* Debug */,
+				82BA203F204D84AA00396AE2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		82F2FA91204309E500E754BD /* Build configuration list for PBXProject "KinUtil" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
