@@ -115,6 +115,7 @@ public class Observable<Value>: UnlinkableObserver {
     }
 
     private var observers = [Observer<Value>]()
+    private var buffer = [Value]()
     private var state = State.open
     fileprivate var parent: UnlinkableObserver?
 
@@ -124,6 +125,13 @@ public class Observable<Value>: UnlinkableObserver {
 
     public func on(queue: DispatchQueue? = nil, next: @escaping (Value) -> Void) -> Observable<Value> {
         observers.append(Observer(next: next, queue: queue))
+
+        if buffer.count > 0 {
+            buffer.forEach { value in
+                observers.forEach { $0.next(value) }
+            }
+            buffer.removeAll()
+        }
 
         return self
     }
@@ -145,7 +153,12 @@ public class Observable<Value>: UnlinkableObserver {
             return
         }
 
-        self.observers.forEach { $0.next(value) }
+        if observers.count > 0 {
+            observers.forEach { $0.next(value) }
+        }
+        else {
+            buffer.append(value)
+        }
     }
 
     public func error(_ error: Error) {
@@ -155,7 +168,7 @@ public class Observable<Value>: UnlinkableObserver {
 
         state = .error
 
-        self.observers.forEach { $0.error(error) }
+        observers.forEach { $0.error(error) }
     }
 
     public func finish() {
@@ -165,7 +178,7 @@ public class Observable<Value>: UnlinkableObserver {
 
         state = .complete
 
-        self.observers.forEach { $0.finish() }
+        observers.forEach { $0.finish() }
     }
 
     public init() {
