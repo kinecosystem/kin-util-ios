@@ -107,6 +107,23 @@ public class PausableObserver<Value>: Observable<Value> {
     }
 }
 
+/**
+ An `Observable` is an object which emits events (values) to its observers.  The one who creates the
+ observable issues calls to `next(_:)` to emit new values.  Values submitted are not emitted until
+ the first observer registers.  Subsequent observers will only see new events.
+ ---
+ ## Observing
+ An interested party begins observing by calling `on(_, next:)`.  This method returns an observable
+ which emits the same value received by the next-event handler.  This allows chaining observables.
+
+ ## Operators
+ `Observable`s have several operators, which filter or transform the received value,
+ as dictated by the operator.  The operator methods return an observable, to allow operators to be chained.
+
+ ## Memory management
+ `Observable`s keep a strong reference to the `Observable` instance they
+ are observing.  It is thus necessary to keep a strong reference to the last link in an observation chain.
+ */
 public class Observable<Value>: UnlinkableObserver {
     private enum State {
         case open
@@ -123,6 +140,12 @@ public class Observable<Value>: UnlinkableObserver {
         return observers.count
     }
 
+    /**
+     Register a handler to be called when a new value is to be emitted.
+
+     - parameter queue: The `DispatchQueue` on which to execute the handler.  If not specified, the handler is called, synchronously, on the same queue as the caller.
+     - parameter next: The handler which receives the emitted value.
+     */
     public func on(queue: DispatchQueue? = nil, next: @escaping (Value) -> Void) -> Observable<Value> {
         observers.append(Observer(next: next, queue: queue))
 
@@ -148,6 +171,11 @@ public class Observable<Value>: UnlinkableObserver {
         return self
     }
 
+    /**
+     Emit a new value to observers.  If no observers are registered, the value is buffered.
+
+     - parameter value: The value to emit.
+     */
     public func next(_ value: Value) {
         guard state == .open else {
             return
@@ -205,6 +233,12 @@ extension Observable {
 //MARK: - Operators -
 
 extension Observable {
+    /**
+     The `accumulate` operator gathers received values into a buffer, and emits the buffer as a single value.
+
+     - parameter limit: The number of values accumulated is limited to this value.  When the limit is reached,
+     the oldest values are discarded as new events are received.
+     */
     public func accumulate(limit: Int) -> Observable<[Value]> {
         var buffer = [Value]()
 
@@ -222,18 +256,23 @@ extension Observable {
         return observable
     }
 
+    /**
+     The `combine` operator observes both the receiver and an other observable.  When either emits a
+     new value, the `Observable` returned by `combine` emits both values as a tuple.
+
+     - parameter other: The observable whose emitted values will be combined with the receiver's.
+     */
     public func combine<OtherValue>(with other: Observable<OtherValue>) -> Observable<(Value?, OtherValue?)> {
         let observable = Observable<(Value?, OtherValue?)>()
 
         var myLatest: Value?
         var otherLatest: OtherValue?
 
-        let observer =
-            on(next: { value in
-                myLatest = value
+        let observer = on(next: { value in
+            myLatest = value
 
-                observable.next((value, otherLatest))
-            })
+            observable.next((myLatest, otherLatest))
+        })
 
         let otherObserver = other.on(next: { value in
             otherLatest = value
@@ -259,6 +298,12 @@ extension Observable {
         return observable
     }
 
+    /**
+     The `filter` operator filters observed values, and only emits the value to its observers when
+     the filter returns `true`.
+
+     - parameter handler: The closure whose return value determines if the value will be emitted.
+     */
     public func filter(_ handler: @escaping (Value) -> Bool) -> Observable<Value> {
         let observable = Observable<Value>()
         observable.parent =
@@ -271,6 +316,12 @@ extension Observable {
         return observable
     }
 
+    /**
+     The `flatMap` operator transforms the received value into a value of a different type.  Observers
+     will receive the transformed value.  Only values which are not `nil` are emitted.
+
+     - parameter handler: The closure whose return value is emitted to observers.
+     */
     public func flatMap<NewValue>(_ handler: @escaping (Value) -> NewValue?) -> Observable<NewValue> {
         let observable = Observable<NewValue>()
         observable.parent =
@@ -285,6 +336,12 @@ extension Observable {
         return observable
     }
 
+    /**
+     The `map` operator transforms the received value into a value of a different type.  Observers
+     will receive the transformed value.
+
+     - parameter handler: The closure whose return value is emitted to observers.
+     */
     public func map<NewValue>(_ handler: @escaping (Value) -> NewValue) -> Observable<NewValue> {
         let observable = Observable<NewValue>()
         observable.parent =
