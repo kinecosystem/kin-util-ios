@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		82321F6020518B2300C5D557 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82321F5F20518B2300C5D557 /* Utility.swift */; };
 		8261EF2B2043DE3B001848CB /* PromiseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8261EF2A2043DE3B001848CB /* PromiseTests.swift */; };
 		8261EF3620446117001848CB /* String+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8261EF3520446117001848CB /* String+extensions.swift */; };
 		8261EF382044623F001848CB /* Data+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8261EF372044623F001848CB /* Data+extensions.swift */; };
@@ -33,6 +34,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		82321F5F20518B2300C5D557 /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
 		8261EF2A2043DE3B001848CB /* PromiseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromiseTests.swift; sourceTree = "<group>"; };
 		8261EF3520446117001848CB /* String+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+extensions.swift"; sourceTree = "<group>"; };
 		8261EF372044623F001848CB /* Data+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+extensions.swift"; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 				8261EF34204460B8001848CB /* extensions */,
 				82F2FAB320430A4600E754BD /* Observable.swift */,
 				82F2FAB220430A4600E754BD /* Promise.swift */,
+				82321F5F20518B2300C5D557 /* Utility.swift */,
 			);
 			path = source;
 			sourceTree = "<group>";
@@ -292,6 +295,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				82321F6020518B2300C5D557 /* Utility.swift in Sources */,
 				82F2FAB520430A4600E754BD /* Observable.swift in Sources */,
 				8261EF382044623F001848CB /* Data+extensions.swift in Sources */,
 				8261EF3620446117001848CB /* String+extensions.swift in Sources */,
