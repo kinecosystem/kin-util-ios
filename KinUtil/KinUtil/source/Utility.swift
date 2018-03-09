@@ -30,3 +30,36 @@ public func serialize<Return>(_ task: (@escaping (Return?, Error?) -> ()) -> ())
 
     return returnValue
 }
+
+public func promise<Return>(_ task: (@escaping (Return?, Error?) -> ()) -> ()) -> Promise<Return> {
+    let p = Promise<Return>()
+
+    task { (value: Return?, error: Error?) -> Void in
+        if let error = error {
+            p.signal(error)
+        }
+
+        if let value = value {
+            p.signal(value)
+        }
+    }
+
+    return p
+}
+
+public func observable<Return>(_ task: (@escaping (Return?, Error?) -> ()) -> ()) -> Observable<Return> {
+    let o = Observable<Return>()
+
+    task { (value: Return?, error: Error?) -> Void in
+        if let error = error {
+            o.error(error)
+        }
+
+        if let value = value {
+            o.next(value)
+            o.finish()
+        }
+    }
+
+    return o
+}
