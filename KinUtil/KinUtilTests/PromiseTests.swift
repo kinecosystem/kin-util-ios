@@ -45,10 +45,12 @@ class PromiseTests: XCTestCase {
         asyncPromise(1)
             .then { x -> Void in
                 XCTAssertEqual(x, Int?(1))
-                e.fulfill()
             }
             .error { error in
                 XCTAssert(false, "Shouldn't reach here.")
+            }
+            .finally {
+                e.fulfill()
         }
 
         wait(for: [e], timeout: 1.0)
@@ -60,10 +62,11 @@ class PromiseTests: XCTestCase {
         asyncError("a")
             .then { _ -> Void in
                 XCTAssert(false, "Shouldn't reach here.")
-                e.fulfill()
             }
             .error { error in
                 XCTAssertEqual((error as? TestError)?.m, "a")
+            }
+            .finally {
                 e.fulfill()
         }
 
@@ -76,13 +79,14 @@ class PromiseTests: XCTestCase {
         asyncError("a")
             .then { _ -> Void in
                 XCTAssert(false, "Shouldn't reach here.")
-                e.fulfill()
             }
             .transformError { _ in
                 return TestError("b")
             }
             .error { error in
                 XCTAssertEqual((error as? TestError)?.m, "b")
+            }
+            .finally {
                 e.fulfill()
         }
 
@@ -98,11 +102,12 @@ class PromiseTests: XCTestCase {
             }
             .then { x -> Void in
                 XCTAssertEqual(x, Int?(2))
-
-                e.fulfill()
             }
             .error { error in
                 XCTAssert(false, "Shouldn't reach here.")
+            }
+            .finally {
+                e.fulfill()
         }
 
         wait(for: [e], timeout: 1.0)
@@ -117,7 +122,8 @@ class PromiseTests: XCTestCase {
             }
             .error { error in
                 XCTAssertEqual((error as? TestError)?.m, "a")
-
+            }
+            .finally {
                 e.fulfill()
         }
 
@@ -136,7 +142,8 @@ class PromiseTests: XCTestCase {
             }
             .error { error in
                 XCTAssertEqual((error as? TestError)?.m, "b")
-
+            }
+            .finally {
                 e.fulfill()
         }
 
@@ -157,7 +164,8 @@ class PromiseTests: XCTestCase {
             }
             .error { error in
                 XCTAssertEqual((error as? TestError)?.m, "a")
-
+            }
+            .finally {
                 e.fulfill()
         }
 
@@ -176,7 +184,8 @@ class PromiseTests: XCTestCase {
             }
             .error { error in
                 XCTAssertEqual((error as? TestError)?.m, "a")
-
+            }
+            .finally {
                 e.fulfill()
         }
 

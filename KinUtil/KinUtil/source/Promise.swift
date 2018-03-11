@@ -13,10 +13,15 @@ private enum Result<Value> {
     case error(Error)
 }
 
-public class Promise<Value> {
+public class Promise<Value>: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        return "Promise [\(Unmanaged<AnyObject>.passUnretained(self as AnyObject).toOpaque())]"
+    }
+
     private var callbacks = [((Result<Value>) -> Void)]()
     private var errorHandler: ((Error) -> Void)?
     private var errorTransform: ((Error) -> Error) = { return $0 }
+    private var finalHandler: (() -> ())?
 
     private var result: Result<Value>? {
         didSet {
@@ -24,8 +29,12 @@ public class Promise<Value> {
 
             if let result = result {
                 switch result {
-                case .value: break
-                case .error(let error): errorHandler?(errorTransform(error))
+                case .value:
+                    break
+                case .error(let error):
+                    errorHandler?(errorTransform(error))
+
+                    finalHandler?()
                 }
 
                 errorHandler = nil
@@ -81,11 +90,13 @@ public class Promise<Value> {
                 case .value(let value):
                     do {
                         try handler(value)
+
+                        p.signal(value)
+                        p.finalHandler?()
                     }
                     catch {
                         p.signal(error)
                     }
-
                 case .error(let error):
                     p.signal(error)
                 }
@@ -122,6 +133,8 @@ public class Promise<Value> {
                                 p.signal(error)
                             }
                         }
+
+                        p.finalHandler?()
                     }
                     catch {
                         p.signal(error)
@@ -148,16 +161,32 @@ public class Promise<Value> {
         return self
     }
 
-    public func error(handler: @escaping (Error) -> Void) {
+    @discardableResult
+    public func error(handler: @escaping (Error) -> Void) -> Promise {
         if let result = result {
             switch result {
-            case .value: break
-            case .error(let error): handler(errorTransform(error))
+            case .value:
+                break
+            case .error(let error):
+                handler(errorTransform(error))
+
+                finalHandler?()
             }
 
-            return
+            return self
         }
 
         errorHandler = handler
+
+        return self
+    }
+
+    public func finally(_ handler: @escaping () -> ()) {
+        if result != nil {
+            handler()
+        }
+        else {
+            finalHandler = handler
+        }
     }
 }
