@@ -107,6 +107,22 @@ public class PausableObserver<Value>: Observable<Value> {
     }
 }
 
+public class StatefulObserver<Value>: Observable<Value> {
+    public private(set) var value: Value?
+
+    convenience public init(value: Value) {
+        self.init()
+
+        self.value = value
+    }
+
+    override public func next(_ value: Value) {
+        self.value = value
+
+        super.next(value)
+    }
+}
+
 /**
  An `Observable` is an object which emits events (values) to its observers.  The one who creates the
  observable issues calls to `next(_:)` to emit new values.  Values submitted are not emitted until
@@ -121,7 +137,7 @@ public class PausableObserver<Value>: Observable<Value> {
  as dictated by the operator.  The operator methods return an observable, to allow operators to be chained.
 
  ## Memory management
- `Observable`s keep a strong reference to the `Observable` instance they
+ `Observable`s only keep a strong reference to the `Observable` instance they
  are observing.  It is thus necessary to keep a strong reference to the last link in an observation chain.
  */
 public class Observable<Value>: UnlinkableObserver {
@@ -347,6 +363,22 @@ extension Observable {
         observable.parent =
             on(next: { value in
                 observable.next(handler(value))
+            })
+
+        return observable
+    }
+
+    /**
+     The `stateful` operator returns an `Observable` which maintains its last value.  The value is
+     available via the `value` property of the returned `Observable`.
+
+     - returns: An `Observable` which will retain the value of its parent.
+     */
+    public func stateful() -> StatefulObserver<Value> {
+        let observable = StatefulObserver<Value>()
+        observable.parent =
+            on(next: { value in
+                observable.next(value)
             })
 
         return observable
