@@ -34,12 +34,21 @@ public class Promise<Value>: CustomDebugStringConvertible {
                 case .error(let error):
                     errorHandler?(errorTransform(error))
 
-                    finalHandler?()
+                    invokeFinally()
                 }
 
                 errorHandler = nil
             }
+
+            if callbacks.isEmpty {
+                invokeFinally()
+            }
         }
+    }
+
+    private func invokeFinally() {
+        finalHandler?()
+        finalHandler = nil
     }
 
     public init() {
@@ -102,7 +111,7 @@ public class Promise<Value>: CustomDebugStringConvertible {
                         try handler(value)
 
                         p.signal(value)
-                        p.finalHandler?()
+                        p.invokeFinally()
                     }
                     catch {
                         p.signal(error)
@@ -144,7 +153,7 @@ public class Promise<Value>: CustomDebugStringConvertible {
                             }
                         }
 
-                        p.finalHandler?()
+                        p.invokeFinally()
                     }
                     catch {
                         p.signal(error)
@@ -180,7 +189,7 @@ public class Promise<Value>: CustomDebugStringConvertible {
             case .error(let error):
                 handler(errorTransform(error))
 
-                finalHandler?()
+                invokeFinally()
             }
 
             return self

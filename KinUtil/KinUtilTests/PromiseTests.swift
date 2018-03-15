@@ -76,7 +76,7 @@ class PromiseTests: XCTestCase {
     func test_async_finally() {
         let e = expectation(description: "")
 
-        asyncError("a")
+        asyncPromise(1)
             .finally {
                 e.fulfill()
         }
