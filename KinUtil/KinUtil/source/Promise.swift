@@ -91,7 +91,7 @@ public class Promise<Value>: CustomDebugStringConvertible {
         return self
     }
 
-    private func observe(callback: @escaping (Result<Value>) -> Void) {
+    private func observe(_ callback: @escaping (Result<Value>) -> Void) {
         callbacks.append(callback)
 
         result.map { callback($0) }
@@ -99,7 +99,7 @@ public class Promise<Value>: CustomDebugStringConvertible {
 
     @discardableResult
     public func then(on queue: DispatchQueue? = nil,
-                     handler: @escaping (Value) throws -> Void) -> Promise {
+                     _ handler: @escaping (Value) throws -> Void) -> Promise {
         let p = Promise<Value>()
         p.errorTransform = errorTransform
 
@@ -133,7 +133,7 @@ public class Promise<Value>: CustomDebugStringConvertible {
 
     @discardableResult
     public func then<NewValue>(on queue: DispatchQueue? = nil,
-                               handler: @escaping (Value) throws -> Promise<NewValue>) -> Promise<NewValue>{
+                               _ handler: @escaping (Value) throws -> Promise<NewValue>) -> Promise<NewValue>{
         let p = Promise<NewValue>()
         p.errorTransform = errorTransform
 
@@ -174,14 +174,14 @@ public class Promise<Value>: CustomDebugStringConvertible {
         return p
     }
 
-    public func transformError(handler: @escaping (Error) -> Error) -> Promise {
+    public func transformError(_ handler: @escaping (Error) -> Error) -> Promise {
         errorTransform = handler
 
         return self
     }
 
     @discardableResult
-    public func error(handler: @escaping (Error) -> Void) -> Promise {
+    public func error(_ handler: @escaping (Error) -> Void) -> Promise {
         if let result = result {
             switch result {
             case .value:
