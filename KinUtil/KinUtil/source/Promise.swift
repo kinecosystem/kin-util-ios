@@ -60,13 +60,23 @@ public class Promise<Value>: CustomDebugStringConvertible {
 
     @discardableResult
     public func signal(_ value: Value) -> Promise {
+        return signal(value: value)
+    }
+
+    @discardableResult
+    public func signal(_ error: Error) -> Promise {
+        return signal(error: error)
+    }
+
+    @discardableResult
+    public func signal(value: Value) -> Promise {
         result = .value(value)
 
         return self
     }
 
     @discardableResult
-    public func signal(_ error: Error) -> Promise {
+    public func signal(error: Error) -> Promise {
         result = .error(error)
 
         return self
