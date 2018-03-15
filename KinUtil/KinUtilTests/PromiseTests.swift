@@ -73,6 +73,17 @@ class PromiseTests: XCTestCase {
         wait(for: [e], timeout: 1.0)
     }
 
+    func test_async_finally() {
+        let e = expectation(description: "")
+
+        asyncError("a")
+            .finally {
+                e.fulfill()
+        }
+
+        wait(for: [e], timeout: 1.0)
+    }
+
     func test_async_error_with_transform() {
         let e = expectation(description: "")
 
