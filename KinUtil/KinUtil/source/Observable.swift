@@ -18,7 +18,7 @@ private protocol UnlinkableObserver: Unlinkable {
     func add(to linkBag: LinkBag)
 }
 
-public class LinkBag {
+public final class LinkBag {
     private var links = [Unlinkable]()
 
     public func add(_ unlinkable: Unlinkable) {
@@ -72,7 +72,7 @@ private struct Observer<Value> {
     }
 }
 
-public class PausableObserver<Value>: Observable<Value> {
+public final class PausableObserver<Value>: Observable<Value> {
     private let limit: Int
     private var buffer = [Value]()
 
@@ -107,14 +107,8 @@ public class PausableObserver<Value>: Observable<Value> {
     }
 }
 
-public class StatefulObserver<Value>: Observable<Value> {
+public final class StatefulObserver<Value>: Observable<Value> {
     public private(set) var value: Value?
-
-    convenience public init(value: Value) {
-        self.init()
-
-        self.value = value
-    }
 
     override public func next(_ value: Value) {
         self.value = value
@@ -225,8 +219,10 @@ public class Observable<Value>: UnlinkableObserver {
         observers.forEach { $0.finish() }
     }
 
-    public init() {
-
+    public init(_ value: Value? = nil) {
+        if let value = value {
+            next(value)
+        }
     }
 }
 
