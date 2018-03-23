@@ -234,7 +234,7 @@ public class Observable<Value>: UnlinkableObserver {
 
 extension Observable {
     public func unlink() {
-        if let count = parent?.observerCount, count < 2 {
+        if parent?.observerCount ?? 0 < 2 {
             parent?.unlink()
         }
 
@@ -253,7 +253,7 @@ extension Observable {
      The `accumulate` operator gathers received values into a buffer, and emits the buffer as a single value.
 
      - parameter limit: The number of values accumulated is limited to this value.  When the limit is reached,
-     the oldest values are discarded as new events are received.
+     the oldest values are discarded as new values are received.
      */
     public func accumulate(limit: Int) -> Observable<[Value]> {
         var buffer = [Value]()

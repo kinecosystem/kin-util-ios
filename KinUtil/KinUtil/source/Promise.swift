@@ -34,10 +34,10 @@ public class Promise<Value>: CustomDebugStringConvertible {
                 case .error(let error):
                     errorHandler?(errorTransform(error))
 
+                    errorHandler = nil
+
                     invokeFinally()
                 }
-
-                errorHandler = nil
             }
 
             if callbacks.isEmpty {
