@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Dispatch
 
 public func serialize<Return>(_ task: (@escaping (Return?, Error?) -> ()) -> ()) throws -> Return? {
     let dispatchGroup = DispatchGroup()

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Dispatch
 
 private enum Result<Value> {
     case value(Value)

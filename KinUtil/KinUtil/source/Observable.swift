@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Dispatch
 
 public protocol Unlinkable {
     func unlink()
