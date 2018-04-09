@@ -35,6 +35,10 @@ public final class LinkBag {
     }
 }
 
+private struct WeakBox<Value> {
+    weak var observable: Observable<Value>?
+}
+
 private struct Observer<Value> {
     private var nextHandler: ((Value) -> Void)?
     private var errorHandler: ((Error) -> Void)?
@@ -295,6 +299,43 @@ extension Observable {
 
         otherObserver.parent = observer
         observable.parent = otherObserver
+
+        return observable
+    }
+
+    /**
+     The `combine` operator observes the receiver and a list of other observables.  When any of the
+     observables emits a new value, the `Observable` returned by `combine` emits all values as an
+     array.  The array is of type [Value?], with `nil` representing the value for observables which
+     have not yet emitted any values.
+
+     - parameter other: The observables whose emitted values will be combined with the receiver's.
+     The observables' values must of the same type as the receiver.
+     */
+    public func combine(with other: Observable<Value> ...) -> Observable<[Value?]> {
+        let observable = Observable<[Value?]>()
+
+        var latest: [Value?] = Array(repeating: nil, count: 1 + other.count)
+
+        let wb = WeakBox(observable: observable)
+
+        let observer = on(next: { value in
+            latest[0] = value
+
+            wb.observable?.next(latest)
+        })
+
+        for (i, o) in other.enumerated() {
+            let otherObserver = o.on(next: { value in
+                latest[i + 1] = value
+
+                observable.next(latest)
+            })
+
+            otherObserver.parent = observer
+        }
+
+        observable.parent = observer
 
         return observable
     }
