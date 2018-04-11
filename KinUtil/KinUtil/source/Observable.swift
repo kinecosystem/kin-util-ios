@@ -139,7 +139,7 @@ public final class StatefulObserver<Value>: Observable<Value> {
  `Observable`s only keep a strong reference to the `Observable` instance they
  are observing.  It is thus necessary to keep a strong reference to the last link in an observation chain.
  */
-public class Observable<Value>: UnlinkableObserver {
+public class Observable<Value> {
     private enum State {
         case open
         case complete
@@ -160,7 +160,10 @@ public class Observable<Value>: UnlinkableObserver {
 
      - parameter queue: The `DispatchQueue` on which to execute the handler.  If not specified, the handler is called, synchronously, on the same queue as the caller.
      - parameter next: The handler which receives the emitted value.
+
+     - returns: the receiver.
      */
+    @discardableResult
     public func on(queue: DispatchQueue? = nil, next: @escaping (Value) -> Void) -> Observable<Value> {
         observers.append(Observer(next: next, queue: queue))
 
@@ -174,12 +177,14 @@ public class Observable<Value>: UnlinkableObserver {
         return self
     }
 
+    @discardableResult
     public func on(queue: DispatchQueue? = nil, error: @escaping (Error) -> Void) -> Observable<Value> {
         observers.append(Observer(error: error, queue: queue))
 
         return self
     }
 
+    @discardableResult
     public func on(queue: DispatchQueue? = nil, finish: @escaping () -> Void) -> Observable<Value> {
         observers.append(Observer(finish: finish, queue: queue))
 
@@ -233,7 +238,7 @@ public class Observable<Value>: UnlinkableObserver {
 
 //MARK: - UnlinkableObserver -
 
-extension Observable {
+extension Observable: UnlinkableObserver {
     public func unlink() {
         if parent?.observerCount ?? 0 < 2 {
             parent?.unlink()
@@ -260,6 +265,8 @@ extension Observable {
         var buffer = [Value]()
 
         let observable = Observable<[Value]>()
+        let wb = WeakBox(observable: observable)
+
         observable.parent = on(next: { (value) in
             buffer.append(value)
 
@@ -267,7 +274,7 @@ extension Observable {
                 buffer.remove(at: 0)
             }
 
-            observable.next(buffer)
+            wb.observable?.next(buffer)
         })
 
         return observable
@@ -281,6 +288,7 @@ extension Observable {
      */
     public func combine<OtherValue>(with other: Observable<OtherValue>) -> Observable<(Value?, OtherValue?)> {
         let observable = Observable<(Value?, OtherValue?)>()
+        let wb = WeakBox(observable: observable)
 
         var myLatest: Value?
         var otherLatest: OtherValue?
@@ -288,13 +296,13 @@ extension Observable {
         let observer = on(next: { value in
             myLatest = value
 
-            observable.next((myLatest, otherLatest))
+            wb.observable?.next((myLatest, otherLatest))
         })
 
         let otherObserver = other.on(next: { value in
             otherLatest = value
 
-            observable.next((myLatest, otherLatest))
+            wb.observable?.next((myLatest, otherLatest))
         })
 
         otherObserver.parent = observer
@@ -314,10 +322,9 @@ extension Observable {
      */
     public func combine(with other: Observable<Value> ...) -> Observable<[Value?]> {
         let observable = Observable<[Value?]>()
+        let wb = WeakBox(observable: observable)
 
         var latest: [Value?] = Array(repeating: nil, count: 1 + other.count)
-
-        let wb = WeakBox(observable: observable)
 
         let observer = on(next: { value in
             latest[0] = value
@@ -342,11 +349,13 @@ extension Observable {
 
     public func debug(_ identifier: String? = nil) -> Observable<Value> {
         let observable = Observable<Value>()
+        let wb = WeakBox(observable: observable)
+
         observable.parent =
             on(next: { (value) -> Void in
                 print("\(identifier ?? "Observable"): DEBUG: \(value)")
 
-                observable.next(value)
+                wb.observable?.next(value)
             })
 
         return observable
@@ -360,10 +369,12 @@ extension Observable {
      */
     public func filter(_ handler: @escaping (Value) -> Bool) -> Observable<Value> {
         let observable = Observable<Value>()
+        let wb = WeakBox(observable: observable)
+
         observable.parent =
             on(next: { value in
                 if handler(value) {
-                    observable.next(value)
+                    wb.observable?.next(value)
                 }
             })
 
@@ -378,13 +389,15 @@ extension Observable {
      */
     public func flatMap<NewValue>(_ handler: @escaping (Value) -> NewValue?) -> Observable<NewValue> {
         let observable = Observable<NewValue>()
+        let wb = WeakBox(observable: observable)
+
         observable.parent =
             on(next: { value in
                 guard let value = handler(value) else {
                     return
                 }
 
-                observable.next(value)
+                wb.observable?.next(value)
             })
 
         return observable
@@ -398,9 +411,11 @@ extension Observable {
      */
     public func map<NewValue>(_ handler: @escaping (Value) -> NewValue) -> Observable<NewValue> {
         let observable = Observable<NewValue>()
+        let wb = WeakBox(observable: observable)
+
         observable.parent =
             on(next: { value in
-                observable.next(handler(value))
+                wb.observable?.next(handler(value))
             })
 
         return observable
@@ -410,22 +425,23 @@ extension Observable {
      The `stateful` operator returns an `Observable` which maintains its last value.  The value is
      available via the `value` property of the returned `Observable`.
 
-     - returns: An `Observable` which will retain the value of its parent.
+     - returns: An `Observable` which will retain the most-recently emitted value.
      */
     public func stateful() -> StatefulObserver<Value> {
         let observable = StatefulObserver<Value>()
-        observable.parent =
-            on(next: { value in
-                observable.next(value)
-            })
+        let wb = WeakBox(observable: observable)
+
+        observable.parent = self.on(next: { wb.observable?.next($0) })
 
         return observable
     }
 
     public func pausable(limit: Int) -> PausableObserver<Value> {
-        let observer = PausableObserver<Value>(limit: limit)
-        observer.parent = self.on(next: { observer.next($0) })
+        let observable = PausableObserver<Value>(limit: limit)
+        let wb = WeakBox(observable: observable)
 
-        return observer
+        observable.parent = self.on(next: { wb.observable?.next($0) })
+
+        return observable
     }
 }
