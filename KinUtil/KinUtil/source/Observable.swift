@@ -77,43 +77,22 @@ private struct Observer<Value> {
     }
 }
 
-public final class PausableObserver<Value>: Observable<Value> {
-    private let limit: Int
-    private var buffer = [Value]()
-
-    public var paused = false {
-        didSet {
-            if !paused && oldValue != paused {
-                buffer.forEach { super.next($0) }
-                buffer.removeAll()
-            }
-        }
-    }
-
-    public init(limit: Int) {
-        self.limit = limit
-    }
-
-    private func add(_ value: Value) {
-        buffer.append(value)
-
-        while buffer.count > limit {
-            buffer.remove(at: 0)
-        }
-    }
-
-    override public func next(_ value: Value) {
-        if paused {
-            add(value)
-        }
-        else {
-            super.next(value)
-        }
-    }
-}
-
 public final class StatefulObserver<Value>: Observable<Value> {
     public private(set) var value: Value?
+
+    @discardableResult
+    override public func on(queue: DispatchQueue? = nil,
+                            next: @escaping (Value) -> Void) -> Observable<Value> {
+        let wasZero = buffer.isEmpty
+
+        super.on(queue: queue, next: next)
+
+        if let value = value, wasZero {
+            super.next(value)
+        }
+
+        return self
+    }
 
     override public func next(_ value: Value) {
         self.value = value
@@ -147,7 +126,7 @@ public class Observable<Value> {
     }
 
     private var observers = [Observer<Value>]()
-    private var buffer = [Value]()
+    fileprivate var buffer = [Value]()
     private var state = State.open
     fileprivate var parent: UnlinkableObserver?
 
@@ -422,6 +401,30 @@ extension Observable {
     }
 
     /**
+     The `skip` operator swallows the first X observed values.
+
+     - parameter handler: The closure whose return value determines if the value will be emitted.
+     */
+    public func skip(_ count: Int) -> Observable<Value> {
+        let observable = Observable<Value>()
+        let wb = WeakBox(observable: observable)
+
+        var skipCount = count
+
+        observable.parent =
+            on(next: { value in
+                if skipCount == 0 {
+                    wb.observable?.next(value)
+                }
+                else {
+                    skipCount -= 1
+                }
+            })
+
+        return observable
+    }
+
+    /**
      The `stateful` operator returns an `Observable` which maintains its last value.  The value is
      available via the `value` property of the returned `Observable`.
 
@@ -429,15 +432,6 @@ extension Observable {
      */
     public func stateful() -> StatefulObserver<Value> {
         let observable = StatefulObserver<Value>()
-        let wb = WeakBox(observable: observable)
-
-        observable.parent = self.on(next: { wb.observable?.next($0) })
-
-        return observable
-    }
-
-    public func pausable(limit: Int) -> PausableObserver<Value> {
-        let observable = PausableObserver<Value>(limit: limit)
         let wb = WeakBox(observable: observable)
 
         observable.parent = self.on(next: { wb.observable?.next($0) })
