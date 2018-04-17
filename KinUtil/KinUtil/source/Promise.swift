@@ -210,3 +210,71 @@ public class Promise<Value>: CustomDebugStringConvertible {
         }
     }
 }
+
+public func attempt<T>(_ tries: Int, retryInterval: TimeInterval = 0.0, closure: @escaping (Int) throws -> Promise<T>) -> Promise<T> {
+    return attempt(retryIntervals: Array(repeating: retryInterval, count: tries - 1), closure: closure)
+}
+
+public func attempt<T>(retryIntervals: [TimeInterval], closure: @escaping (Int) throws -> Promise<T>) -> Promise<T> {
+    let p = Promise<T>()
+
+    let tries = retryIntervals.count + 1
+
+    var attempts = 0
+
+    var attempt2 = {}
+
+    let attempt1 = {
+        attempts += 1
+
+        do {
+            try closure(attempts)
+                .then({
+                    p.signal($0)
+                })
+                .error({
+                    if attempts < tries {
+                        DispatchQueue.global().asyncAfter(deadline: .now() + retryIntervals[attempts - 1]) {
+                            attempt2()
+                        }
+
+                        return
+                    }
+
+                    p.signal($0)
+                })
+        }
+        catch {
+            p.signal(error)
+        }
+    }
+
+    attempt2 = {
+        attempts += 1
+
+        do {
+            try closure(attempts)
+                .then({
+                    p.signal($0)
+                })
+                .error({
+                    if attempts < tries {
+                        DispatchQueue.global().asyncAfter(deadline: .now() + retryIntervals[attempts - 1]) {
+                            attempt1()
+                        }
+
+                        return
+                    }
+
+                    p.signal($0)
+                })
+        }
+        catch {
+            p.signal(error)
+        }
+    }
+
+    attempt1()
+
+    return p
+}

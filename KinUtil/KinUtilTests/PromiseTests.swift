@@ -203,4 +203,104 @@ class PromiseTests: XCTestCase {
         wait(for: [e], timeout: 1.0)
     }
 
+    func test_attempt_with_immediate_success() {
+        let e = expectation(description: "")
+
+        var attempts = 0
+        attempt(2) { _ -> Promise<Int> in
+            attempts += 1
+            return self.asyncPromise(1)
+            }
+            .then({ _ in
+                e.fulfill()
+            })
+            .error({
+                XCTAssert(false, "Received unexpected error: \($0)")
+            })
+
+        wait(for: [e], timeout: 1.0)
+
+        XCTAssertEqual(attempts, 1)
+    }
+
+    func test_attempt_with_immediate_failure() {
+        let e = expectation(description: "")
+
+        var attempts = 0
+        attempt(2) { _ -> Promise<Int> in
+            attempts += 1
+            throw TestError("b")
+            }
+            .then({ _ in
+                XCTAssert(false, "Received unexpected success")
+            })
+            .error({
+                if let e = $0 as? TestError {
+                    XCTAssertEqual(e.m, "b")
+                }
+                else {
+                    XCTAssert(false, "Received unexpected error: \($0)")
+                }
+
+                e.fulfill()
+            })
+
+        wait(for: [e], timeout: 1.0)
+
+        XCTAssertEqual(attempts, 1)
+    }
+
+    func test_attempt_with_eventual_success() {
+        let e = expectation(description: "")
+
+        var attempts = 0
+        attempt(2, closure: { _ -> Promise<Int> in
+            attempts += 1
+
+            if attempts == 1 {
+                return self.asyncError("a")
+            }
+            else {
+                return self.asyncPromise(1)
+            }
+        })
+            .then({ _ in
+                e.fulfill()
+            })
+            .error({
+                XCTAssert(false, "Received unexpected error: \($0)")
+            })
+
+        wait(for: [e], timeout: 1.0)
+
+        XCTAssertEqual(attempts, 2)
+    }
+
+    func test_attempt_without_success() {
+        let e = expectation(description: "")
+
+        var attempts = 0
+        attempt(2) { _ -> Promise<Int> in
+            attempts += 1
+            return self.asyncError("a")
+            }
+            .then({ _ in
+                throw TestError("b")
+            })
+            .error({
+                if let e = $0 as? TestError {
+                    XCTAssertNotEqual(e.m, "b")
+                }
+                else {
+                    XCTAssert(false, "Received unexpected error: \($0)")
+                }
+
+                e.fulfill()
+            })
+
+        wait(for: [e], timeout: 1.0)
+
+        XCTAssertEqual(attempts, 2)
+    }
+
 }
