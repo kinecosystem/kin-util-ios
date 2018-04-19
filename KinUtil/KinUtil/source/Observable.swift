@@ -101,6 +101,30 @@ public final class StatefulObserver<Value>: Observable<Value> {
     }
 }
 
+public final class NotificationObserver: Observable<Notification> {
+    private var token: NSObjectProtocol
+
+    init(name: Notification.Name,
+         object: Any? = nil,
+         center: NotificationCenter = .default,
+         queue: OperationQueue? = nil) {
+        token = NSObject()
+
+        super.init()
+
+        token = center.addObserver(forName: name,
+                                   object: object,
+                                   queue: queue,
+                                   using: { [weak self] notification in
+                                    self?.next(notification)
+        })
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(token)
+    }
+}
+
 /**
  An `Observable` is an object which emits events (values) to its observers.  The one who creates the
  observable issues calls to `next(_:)` to emit new values.  Values submitted are not emitted until
