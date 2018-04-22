@@ -112,7 +112,6 @@ public class Promise<Value>: CustomDebugStringConvertible {
                         try handler(value)
 
                         p.signal(value)
-                        p.invokeFinally()
                     }
                     catch {
                         p.signal(error)
@@ -153,8 +152,6 @@ public class Promise<Value>: CustomDebugStringConvertible {
                                 p.signal(error)
                             }
                         }
-
-                        p.invokeFinally()
                     }
                     catch {
                         p.signal(error)

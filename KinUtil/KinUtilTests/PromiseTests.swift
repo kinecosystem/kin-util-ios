@@ -19,10 +19,10 @@ class PromiseTests: XCTestCase {
         }
     }
 
-    func asyncPromise(_ x: Int) -> Promise<Int> {
+    func asyncPromise(_ x: Int, delay: TimeInterval = 0.0) -> Promise<Int> {
         let p = Promise<Int>()
 
-        DispatchQueue(label: "").async {
+        DispatchQueue(label: "").asyncAfter(deadline: .now() + delay) {
             p.signal(x)
         }
 
@@ -82,6 +82,31 @@ class PromiseTests: XCTestCase {
         }
 
         wait(for: [e], timeout: 1.0)
+    }
+
+    func test_async_nested_chain_with_outer_finally() {
+        let e = expectation(description: "")
+
+        var s = ""
+
+        asyncPromise(1, delay: 1.0)
+            .then { x -> Promise<Int> in
+                return self.asyncPromise(2, delay: 1.0)
+                    .then({ _ -> Promise<Int> in
+                        s = "a"
+                        return self.asyncPromise(3)
+                    })
+                    .then({ _ in })
+            }
+            .error { error in
+                XCTAssertTrue(false, "Unexpected error: \(error)")
+            }
+            .finally {
+                XCTAssertEqual(s, "a")
+                e.fulfill()
+        }
+
+        wait(for: [e], timeout: 10.0)
     }
 
     func test_async_error_with_transform() {
