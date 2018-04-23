@@ -125,6 +125,75 @@ public final class NotificationObserver: Observable<Notification> {
     }
 }
 
+public final class KVOObserver<Type, ValueType>: Observable<(new: ValueType, old: ValueType?)> {
+    private enum Errors: Error {
+        case invalidKeyPath
+    }
+
+    private class Observer: NSObject {
+        fileprivate weak var kvoObserver: KVOObserver?
+
+        @objc override func observeValue(forKeyPath keyPath: String?,
+                                         of object: Any?,
+                                         change: [NSKeyValueChangeKey : Any]?,
+                                         context: UnsafeMutableRawPointer?) {
+            let new = change?[NSKeyValueChangeKey.newKey]
+            let old = change?[NSKeyValueChangeKey.oldKey]
+
+            if let new = new as? ValueType {
+                kvoObserver?.next((new: new, old: old as? ValueType))
+            }
+        }
+    }
+
+    private class OnDelete: NSObject {
+        private let block: () -> ()
+
+        init(block: @escaping () -> ()) {
+            self.block = block
+        }
+
+        deinit {
+            block()
+        }
+    }
+
+    private let observer: Observer
+    private var object: Unmanaged<NSObject>?
+
+    private let keyPath: String
+
+    init(object: NSObject, keyPath: WritableKeyPath<Type, ValueType>, options: NSKeyValueObservingOptions = [.new]) throws {
+        guard let stringPath = keyPath._kvcKeyPathString else {
+            throw Errors.invalidKeyPath
+        }
+
+        self.observer = Observer()
+        self.object = Unmanaged.passUnretained(object)
+        self.keyPath = stringPath
+
+        super.init()
+
+        observer.kvoObserver = self
+        object.addObserver(observer, forKeyPath: self.keyPath, options: options, context: nil)
+
+        let deletion = OnDelete { [weak self] in self?.cancel() }
+        objc_setAssociatedObject(object,
+                                 Unmanaged.passUnretained(self).toOpaque(),
+                                 deletion,
+                                 .OBJC_ASSOCIATION_RETAIN)
+    }
+
+    private func cancel() {
+        object?.takeUnretainedValue().removeObserver(observer, forKeyPath: keyPath)
+        object = nil
+    }
+
+    deinit {
+        cancel()
+    }
+}
+
 /**
  An `Observable` is an object which emits events (values) to its observers.  The one who creates the
  observable issues calls to `next(_:)` to emit new values.  Values submitted are not emitted until
