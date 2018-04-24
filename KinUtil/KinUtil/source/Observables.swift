@@ -107,7 +107,7 @@ public final class KVOObserver<Type, ValueType>: Observable<(new: ValueType, old
         super.init()
 
         observer.kvoObserver = self
-        object.addObserver(observer, forKeyPath: self.keyPath, options: options, context: nil)
+        object.addObserver(observer, forKeyPath: self.keyPath, options: options.union([.new]), context: nil)
 
         let deletion = OnDelete { [weak self] in self?.cancel() }
         objc_setAssociatedObject(object,
