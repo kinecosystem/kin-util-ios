@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name        = "KinUtil"
-  s.version     = "0.0.4"
+  s.version     = "0.0.5"
   s.license     = { :type => "MIT" }
   s.homepage    = "https://github.com/kinfoundation/kin-util-ios.git"
   s.summary     = "A framework containing utility classes used by Kin Foundation SDKs."
