@@ -13,7 +13,7 @@ public protocol Unlinkable {
     func unlink()
 }
 
-private protocol UnlinkableObserver: Unlinkable {
+protocol UnlinkableObserver: Unlinkable {
     var observerCount: Int { get }
     var parent: UnlinkableObserver? { get }
     func add(to linkBag: LinkBag)
@@ -104,9 +104,9 @@ public class Observable<Value> {
     private var observers = [Observer<Value>]()
     internal var buffer = [Value]()
     private var state = State.open
-    fileprivate var parent: UnlinkableObserver?
+    var parent: UnlinkableObserver?
 
-    fileprivate var observerCount: Int {
+    var observerCount: Int {
         return observers.count
     }
 
