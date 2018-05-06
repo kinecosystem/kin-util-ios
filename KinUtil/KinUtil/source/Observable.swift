@@ -379,7 +379,7 @@ extension Observable {
     /**
      The `skip` operator swallows the first X observed values.
 
-     - parameter handler: The closure whose return value determines if the value will be emitted.
+     - parameter count: The number of events to swallow before emitting values.
      */
     public func skip(_ count: Int) -> Observable<Value> {
         let observable = Observable<Value>()
