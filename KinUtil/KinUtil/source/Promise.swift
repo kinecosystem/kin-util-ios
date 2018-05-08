@@ -9,7 +9,7 @@
 import Foundation
 import Dispatch
 
-private enum Result<Value> {
+public enum Result<Value> {
     case value(Value)
     case error(Error)
 }
@@ -24,7 +24,7 @@ public class Promise<Value>: CustomDebugStringConvertible {
     private var errorTransform: ((Error) -> Error) = { return $0 }
     private var finalHandler: (() -> ())?
 
-    private var result: Result<Value>? {
+    public private(set) var result: Result<Value>? {
         didSet {
             callbacks.forEach { c in result.map { c($0) } }
 
