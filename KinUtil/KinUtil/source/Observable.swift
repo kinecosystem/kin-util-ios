@@ -225,9 +225,7 @@ extension Observable {
         observable.parent = on(next: { (value) in
             buffer.append(value)
 
-            while buffer.count > limit {
-                buffer.remove(at: 0)
-            }
+            buffer.removeFirst(max(0, buffer.count - limit))
 
             wb.observable?.next(buffer)
         })
