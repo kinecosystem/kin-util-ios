@@ -110,8 +110,8 @@ extension Promise {
         return np
     }
 
-    func then<NewValue>(on queue: DispatchQueue? = nil,
-                        _ handler: @escaping (Value) throws -> NewValue) -> Promise<NewValue> {
+    public func then<NewValue>(on queue: DispatchQueue? = nil,
+                               _ handler: @escaping (Value) throws -> NewValue) -> Promise<NewValue> {
         let np = Promise<NewValue>()
 
         observe { result in
