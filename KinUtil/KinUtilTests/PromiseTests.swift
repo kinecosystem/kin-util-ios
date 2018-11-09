@@ -116,7 +116,7 @@ class PromiseTests: XCTestCase {
             .then { _ -> Void in
                 XCTAssert(false, "Shouldn't reach here.")
             }
-            .transformError { _ in
+            .mapError { _ in
                 return TestError("b")
             }
             .error { error in
@@ -173,7 +173,7 @@ class PromiseTests: XCTestCase {
             .then { x -> Promise<Int> in
                 throw TestError("a")
             }
-            .transformError { _ in
+            .mapError { _ in
                 return TestError("b")
             }
             .error { error in
@@ -326,6 +326,245 @@ class PromiseTests: XCTestCase {
         wait(for: [e], timeout: 1.0)
 
         XCTAssertEqual(attempts, 2)
+    }
+
+    func test_signal_first() {
+        let e = expectation(description: "")
+
+        let p = Promise<Int>()
+        p.signal(1)
+
+        p.then { _ in
+            e.fulfill()
+        }
+
+        wait(for: [e], timeout: 0.1)
+    }
+
+    func test_signal_second() {
+        let e = expectation(description: "")
+
+        let p = Promise<Int>()
+
+        p.then { _ in
+            e.fulfill()
+        }
+
+        p.signal(1)
+
+        wait(for: [e], timeout: 0.1)
+    }
+
+    func test_signal_last_async() {
+        let e = expectation(description: "")
+
+        let p = Promise<Int>()
+
+        p.then { _ in
+            e.fulfill()
+        }
+
+        DispatchQueue.global().async { p.signal(1) }
+
+        wait(for: [e], timeout: 0.1)
+    }
+
+    func test_signal_first_async() {
+        let e = expectation(description: "")
+
+        let p = Promise<Int>()
+
+        DispatchQueue.global().async { p.signal(1) }
+
+        p.then { _ in
+            e.fulfill()
+        }
+
+        wait(for: [e], timeout: 0.1)
+    }
+
+    func test_signal_first_then_async() {
+        let e = expectation(description: "")
+
+        let p = Promise<Int>()
+
+        p.signal(1)
+
+        DispatchQueue.global().async {
+            p.then { _ in
+                e.fulfill()
+            }
+        }
+
+        wait(for: [e], timeout: 0.1)
+    }
+
+    func test_signal_last_then_async() {
+        let e = expectation(description: "")
+
+        let p = Promise<Int>()
+
+        DispatchQueue.global().async {
+            p.then { _ in
+                e.fulfill()
+            }
+        }
+
+        p.signal(1)
+
+        wait(for: [e], timeout: 0.1)
+    }
+
+    func test_chain_of_promise() {
+        let e1 = expectation(description: "")
+        let e2 = expectation(description: "")
+
+        let p = Promise<Int>()
+        p.signal(1)
+
+        p.then { _ -> Promise<Int> in
+            e1.fulfill()
+
+            return Promise<Int>(2)
+            }
+            .then { _ in e2.fulfill() }
+
+        wait(for: [e1, e2], timeout: 0.1)
+    }
+
+    func test_chain_of_value() {
+        let e1 = expectation(description: "")
+        let e2 = expectation(description: "")
+
+        let p = Promise<Int>()
+        p.signal(1)
+
+        p.then { _ -> Int in
+            e1.fulfill()
+
+            return 2
+            }
+            .then { _ in e2.fulfill() }
+
+        wait(for: [e1, e2], timeout: 0.1)
+    }
+
+    func test_signal_error() {
+        let e = expectation(description: "")
+
+        Promise<Int>(TestError("a"))
+            .then { _ in XCTFail() }
+            .error { _ in e.fulfill() }
+
+        wait(for: [e], timeout: 0.1)
+    }
+
+    func test_chain_signal_error_on_first() {
+        let e = expectation(description: "")
+
+        Promise<Int>(TestError("a"))
+            .then { _ in return Promise(2) }
+            .error { _ in e.fulfill() }
+
+        wait(for: [e], timeout: 0.1)
+    }
+
+    func test_chain_signal_error_on_second() {
+        let e = expectation(description: "")
+
+        Promise<Int>(1)
+            .then { _ in return Promise<Int>(TestError("b")) }
+            .error { _ in e.fulfill() }
+
+        wait(for: [e], timeout: 0.1)
+    }
+
+    func test_chain_throw_error_on_second() {
+        let e = expectation(description: "")
+
+        Promise<Int>(1)
+            .then { _ in throw TestError("b") }
+            .error { _ in e.fulfill() }
+
+        wait(for: [e], timeout: 0.1)
+    }
+
+    func test_triple_chain_throw_error_on_second() {
+        let e = expectation(description: "")
+
+        Promise<Int>(1)
+            .then { _ in throw TestError("b") }
+            .then { _ -> String in XCTFail(); return "c" }
+            .error { _ in e.fulfill() }
+
+        wait(for: [e], timeout: 0.1)
+    }
+
+    func test_queue() {
+        let e = expectation(description: "")
+
+        let p = Promise<Int>(1)
+
+        p.then(on: DispatchQueue.global()) { _ in
+            e.fulfill()
+        }
+
+        wait(for: [e], timeout: 0.1)
+    }
+
+    func test_finally() {
+        let e = expectation(description: "")
+
+        let p = Promise<Int>(1)
+
+        p
+            .then { _ in }
+            .finally { e.fulfill() }
+
+        wait(for: [e], timeout: 0.1)
+    }
+
+    func test_finally_after_error() {
+        let e = expectation(description: "")
+
+        let p = Promise<Int>(TestError("a"))
+
+        p
+            .then { _ in }
+            .error { _ in }
+            .finally { e.fulfill() }
+
+        wait(for: [e], timeout: 0.1)
+    }
+
+    func test_finally_after_chain() {
+        let e = expectation(description: "")
+
+        let p = Promise<Int>(1)
+
+        p
+            .then { _ in return Promise(2) }
+            .error { _ in }
+            .finally { e.fulfill() }
+
+        wait(for: [e], timeout: 0.1)
+    }
+
+    func test_map_error() {
+        let e = expectation(description: "")
+
+        let p = Promise<Int>(TestError("a"))
+
+        p
+            .mapError { _ in return TestError("b") }
+            .error({
+                if let err = $0 as? TestError {
+                    XCTAssertEqual(err.m, "b")
+                    e.fulfill()
+                }
+            })
+
+        wait(for: [e], timeout: 0.1)
     }
 
 }
