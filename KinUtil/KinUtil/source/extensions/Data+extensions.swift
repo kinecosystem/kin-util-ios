@@ -48,6 +48,10 @@ public extension Data {
         return map { $0 }.description
     }
 
+    var array: [UInt8] {
+        return self.filter { _ in true }
+    }
+
     var crc16: [UInt8] {
         let crc16tab: [UInt16] = [
             0x0000,0x1021,0x2042,0x3063,0x4084,0x50a5,0x60c6,0x70e7,
