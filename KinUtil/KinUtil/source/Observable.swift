@@ -335,12 +335,12 @@ extension Observable {
     }
 
     /**
-     The `flatMap` operator transforms the received value into a value of a different type.  Observers
+     The `compactMap` operator transforms the received value into a value of a different type.  Observers
      will receive the transformed value.  Only values which are not `nil` are emitted.
 
      - parameter handler: The closure whose return value is emitted to observers.
      */
-    public func flatMap<NewValue>(_ handler: @escaping (Value) -> NewValue?) -> Observable<NewValue> {
+    public func compactMap<NewValue>(_ handler: @escaping (Value) -> NewValue?) -> Observable<NewValue> {
         let observable = Observable<NewValue>()
         let wb = WeakBox(observable: observable)
 
