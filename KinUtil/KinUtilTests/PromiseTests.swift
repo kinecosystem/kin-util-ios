@@ -47,7 +47,7 @@ class PromiseTests: XCTestCase {
                 XCTAssertEqual(x, Int?(1))
             }
             .error { error in
-                XCTAssert(false, "Shouldn't reach here.")
+                XCTFail("Shouldn't reach here.")
             }
             .finally {
                 e.fulfill()
@@ -61,7 +61,7 @@ class PromiseTests: XCTestCase {
 
         asyncError("a")
             .then { _ -> Void in
-                XCTAssert(false, "Shouldn't reach here.")
+                XCTFail("Shouldn't reach here.")
             }
             .error { error in
                 XCTAssertEqual((error as? TestError)?.m, "a")
@@ -114,7 +114,7 @@ class PromiseTests: XCTestCase {
 
         asyncError("a")
             .then { _ -> Void in
-                XCTAssert(false, "Shouldn't reach here.")
+                XCTFail("Shouldn't reach here.")
             }
             .mapError { _ in
                 return TestError("b")
@@ -140,7 +140,7 @@ class PromiseTests: XCTestCase {
                 XCTAssertEqual(x, Int?(2))
             }
             .error { error in
-                XCTAssert(false, "Shouldn't reach here.")
+                XCTFail("Shouldn't reach here.")
             }
             .finally {
                 e.fulfill()
@@ -196,7 +196,7 @@ class PromiseTests: XCTestCase {
                 throw TestError("a")
             }
             .then { _ -> Void in
-                XCTAssert(false, "Shouldn't reach here.")
+                XCTFail("Shouldn't reach here.")
             }
             .error { error in
                 XCTAssertEqual((error as? TestError)?.m, "a")
@@ -257,7 +257,7 @@ class PromiseTests: XCTestCase {
             throw TestError("b")
             }
             .then({ _ in
-                XCTAssert(false, "Received unexpected success")
+                XCTFail("Shouldn't reach here.")
             })
             .error({
                 if let e = $0 as? TestError {
