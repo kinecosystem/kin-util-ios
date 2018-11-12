@@ -46,18 +46,16 @@ public class Future<Value> {
 }
 
 public final class Promise<Value>: Future<Value> {
-    override public init() {
-
-    }
+    override public init() { }
 
     public convenience init(_ value: Value) {
         self.init()
-        result = result ?? .success(value)
+        signal(value)
     }
 
     public convenience init(_ error: Error) {
         self.init()
-        result = result ?? .failure(error)
+        signal(error)
     }
 
     @discardableResult
@@ -75,12 +73,6 @@ public final class Promise<Value>: Future<Value> {
     }
 }
 
-extension Promise: CustomDebugStringConvertible {
-    public var debugDescription: String {
-        return "Promise [\(Unmanaged<AnyObject>.passUnretained(self as AnyObject).toOpaque())]"
-    }
-}
-
 extension Promise {
     public func then<NewValue>(on queue: DispatchQueue? = nil,
                                _ handler: @escaping (Value) throws -> Promise<NewValue>) -> Promise<NewValue> {
@@ -89,22 +81,14 @@ extension Promise {
         observe { result in
             let block = {
                 do {
-                    try handler(result.unwrap())
-                        .observe(with: { result in
-                            np.result = result
-                        })
+                    try handler(result.unwrap()).observe { np.result = $0 }
                 }
                 catch {
                     np.signal(error)
                 }
             }
 
-            if let queue = queue {
-                queue.async { block() }
-            }
-            else {
-                block()
-            }
+            self.run(block, on: queue)
         }
 
         return np
@@ -124,12 +108,7 @@ extension Promise {
                 }
             }
 
-            if let queue = queue {
-                queue.async { block() }
-            }
-            else {
-                block()
-            }
+            self.run(block, on: queue)
         }
 
         return np
@@ -145,12 +124,7 @@ extension Promise {
                 }
             }
 
-            if let queue = queue {
-                queue.async { block() }
-            }
-            else {
-                block()
-            }
+            self.run(block, on: queue)
         }
 
         return self
@@ -158,18 +132,7 @@ extension Promise {
 
     public func finally(on queue: DispatchQueue? = nil,
                         _ handler: @escaping () -> ()) {
-        observe { _ in
-            let block = {
-                handler()
-            }
-
-            if let queue = queue {
-                queue.async { block() }
-            }
-            else {
-                block()
-            }
-        }
+        observe { _ in self.run(handler, on: queue) }
     }
 
     @discardableResult
@@ -182,12 +145,7 @@ extension Promise {
                 }
             }
 
-            if let queue = queue {
-                queue.async { block() }
-            }
-            else {
-                block()
-            }
+            self.run(block, on: queue)
         }
 
         return self
@@ -214,6 +172,22 @@ extension Promise {
     }
 }
 
+extension Promise {
+    private func run(_ block: () -> (), on queue: DispatchQueue?) {
+        if let queue = queue {
+            queue.sync { block() }
+        }
+        else {
+            block()
+        }
+    }
+}
+
+extension Promise: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        return "Promise [\(Unmanaged<AnyObject>.passUnretained(self as AnyObject).toOpaque())]"
+    }
+}
 
 public func attempt<T>(_ tries: Int, retryInterval: TimeInterval = 0.0, closure: @escaping (Int) throws -> Promise<T>) -> Promise<T> {
     return attempt(retryIntervals: Array(repeating: retryInterval, count: tries - 1), closure: closure)
