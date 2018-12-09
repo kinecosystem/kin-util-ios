@@ -29,6 +29,11 @@ public final class LinkBag {
     public init() {
 
     }
+
+    public func clear() {
+        links.forEach { $0.unlink() }
+        links.removeAll()
+    }
     
     deinit {
         links.forEach { $0.unlink() }
