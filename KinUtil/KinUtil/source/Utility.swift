@@ -9,6 +9,8 @@
 import Foundation
 import Dispatch
 
+struct AwaitTimeout: Error { }
+
 public func serialize<Return>(_ task: (@escaping (Return?, Error?) -> ()) -> ()) throws -> Return? {
     let dispatchGroup = DispatchGroup()
     dispatchGroup.enter()
@@ -48,6 +50,21 @@ public func promise<Return>(_ task: (@escaping (Return?, Error?) -> ()) -> ()) -
     return p
 }
 
+public func promise<T>(_ futures: [Future<T>], timeout: TimeInterval? = nil) -> Promise<[T]> {
+    let p = Promise<[T]>()
+
+    DispatchQueue.global().async {
+        do {
+            p.signal(try await(futures, timeout: timeout))
+        }
+        catch {
+            p.signal(error)
+        }
+    }
+
+    return p
+}
+
 public func observable<Return>(_ task: (@escaping (Return?, Error?) -> ()) -> ()) -> Observable<Return> {
     let o = Observable<Return>()
 
@@ -63,4 +80,26 @@ public func observable<Return>(_ task: (@escaping (Return?, Error?) -> ()) -> ()
     }
 
     return o
+}
+
+public func await<T>(_ futures: [Future<T>], timeout: TimeInterval? = nil) throws -> [T] {
+    let group = DispatchGroup()
+
+    var results = [Result<T>]()
+
+    for future in futures {
+        group.enter()
+
+        future.observe {
+            results.append($0)
+
+            group.leave()
+        }
+    }
+
+    let wait = group.wait(timeout: timeout != nil ? .now() + timeout! : DispatchTime.distantFuture)
+
+    if wait == DispatchTimeoutResult.timedOut { throw AwaitTimeout() }
+
+    return try results.map { try $0.unwrap() }
 }
