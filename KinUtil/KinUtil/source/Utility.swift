@@ -50,21 +50,6 @@ public func promise<Return>(_ task: (@escaping (Return?, Error?) -> ()) -> ()) -
     return p
 }
 
-public func promise<T>(_ futures: [Future<T>], timeout: TimeInterval? = nil) -> Promise<[T]> {
-    let p = Promise<[T]>()
-
-    DispatchQueue.global().async {
-        do {
-            p.signal(try await(futures, timeout: timeout))
-        }
-        catch {
-            p.signal(error)
-        }
-    }
-
-    return p
-}
-
 public func observable<Return>(_ task: (@escaping (Return?, Error?) -> ()) -> ()) -> Observable<Return> {
     let o = Observable<Return>()
 
@@ -82,7 +67,7 @@ public func observable<Return>(_ task: (@escaping (Return?, Error?) -> ()) -> ()
     return o
 }
 
-public func await<T>(_ futures: [Future<T>], timeout: TimeInterval? = nil) throws -> [T] {
+public func await<T>(_ futures: [Future<T>], timeout: TimeInterval? = nil) -> Promise<[T]> {
     let group = DispatchGroup()
 
     var results = [Result<T>]()
@@ -99,7 +84,14 @@ public func await<T>(_ futures: [Future<T>], timeout: TimeInterval? = nil) throw
 
     let wait = group.wait(timeout: timeout != nil ? .now() + timeout! : DispatchTime.distantFuture)
 
-    if wait == DispatchTimeoutResult.timedOut { throw AwaitTimeout() }
+    if wait == DispatchTimeoutResult.timedOut {
+        return Promise(AwaitTimeout())
+    }
 
-    return try results.map { try $0.unwrap() }
+    do {
+        return Promise(try results.map { try $0.unwrap() })
+    }
+    catch {
+        return Promise(error)
+    }
 }
