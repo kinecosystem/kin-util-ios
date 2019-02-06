@@ -174,7 +174,7 @@ extension Promise {
 
 extension Promise {
     private func run(_ block: () -> (), on queue: DispatchQueue?) {
-        if let queue = queue {
+        if let queue = queue, queue != .main {
             queue.sync { block() }
         }
         else {
