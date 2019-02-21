@@ -57,6 +57,7 @@ public final class NotificationObserver: Observable<Notification> {
     }
 }
 
+#if !os(Linux)
 public final class KVOObserver<Type, ValueType>: Observable<(new: ValueType, old: ValueType?)> {
     private enum Errors: Error {
         case invalidKeyPath
@@ -125,3 +126,4 @@ public final class KVOObserver<Type, ValueType>: Observable<(new: ValueType, old
         cancel()
     }
 }
+#endif
