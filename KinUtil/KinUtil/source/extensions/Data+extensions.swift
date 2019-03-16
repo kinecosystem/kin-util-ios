@@ -24,13 +24,9 @@ public extension Data {
 
         self = data
     }
-
-    var hexString: String {
-        return reduce("") { $0 + String(format: "%02x", $1) }
-    }
 }
 
-public extension Data {
+public extension Sequence where Element == UInt8 {
     var binaryString: String {
         var s = ""
 
@@ -44,12 +40,12 @@ public extension Data {
         return s
     }
 
-    var byteString: String {
-        return map { $0 }.description
+    var hexString: String {
+        return reduce("") { $0 + String(format: "%02x", $1) }
     }
 
     var array: [UInt8] {
-        return self.filter { _ in true }
+        return self.map { $0 }
     }
 
     var crc16: [UInt8] {

@@ -19,6 +19,7 @@
 		82BA2037204D84AA00396AE2 /* String+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8261EF3520446117001848CB /* String+extensions.swift */; };
 		82BA2038204D84AA00396AE2 /* Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F2FAB220430A4600E754BD /* Promise.swift */; };
 		82BA203B204D84AA00396AE2 /* KinUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 82F2FA9A204309E500E754BD /* KinUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		82C07AD7223BF7D100AC90BC /* Base32.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82C07AD6223BF7D100AC90BC /* Base32.swift */; };
 		82F2FAA1204309E500E754BD /* KinUtil.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82F2FA97204309E500E754BD /* KinUtil.framework */; };
 		82F2FAA6204309E500E754BD /* KinUtilTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F2FAA5204309E500E754BD /* KinUtilTests.swift */; };
 		82F2FAA8204309E500E754BD /* KinUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 82F2FA9A204309E500E754BD /* KinUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -46,6 +47,7 @@
 		82870754219753550031229D /* Array+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+extensions.swift"; sourceTree = "<group>"; };
 		82BA2040204D84AA00396AE2 /* KinUtil.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = KinUtil.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		82BA2041204D84AB00396AE2 /* KinUtil-macos-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "KinUtil-macos-Info.plist"; path = "/Users/avi/Projects/kin-core-ios/KinSDK/StellarKit/kin-util-ios/KinUtil/KinUtil-macos-Info.plist"; sourceTree = "<absolute>"; };
+		82C07AD6223BF7D100AC90BC /* Base32.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Base32.swift; sourceTree = "<group>"; };
 		82F2FA97204309E500E754BD /* KinUtil.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = KinUtil.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		82F2FA9A204309E500E754BD /* KinUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KinUtil.h; sourceTree = "<group>"; };
 		82F2FA9B204309E500E754BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -141,6 +143,7 @@
 				82F2FAB220430A4600E754BD /* Promise.swift */,
 				82321F5F20518B2300C5D557 /* Utility.swift */,
 				8251CAB2208E005C00D0EBAA /* Observables.swift */,
+				82C07AD6223BF7D100AC90BC /* Base32.swift */,
 			);
 			path = source;
 			sourceTree = "<group>";
@@ -309,6 +312,7 @@
 				82321F6020518B2300C5D557 /* Utility.swift in Sources */,
 				82321F6220526B6500C5D557 /* Curry.swift in Sources */,
 				82870755219753550031229D /* Array+extensions.swift in Sources */,
+				82C07AD7223BF7D100AC90BC /* Base32.swift in Sources */,
 				82F2FAB520430A4600E754BD /* Observable.swift in Sources */,
 				8261EF382044623F001848CB /* Data+extensions.swift in Sources */,
 				8261EF3620446117001848CB /* String+extensions.swift in Sources */,
