@@ -10,57 +10,92 @@ import Foundation
 
 public enum Base32 {
     public static func encode<T: Sequence>(_ data: T) -> String where T.Element == UInt8 {
-        let data = data.map { $0 }
+        var data = data.map { $0 }
 
-        var binary = data.binaryString
         var s = ""
 
-        let extraCount = (binary.count % 40)
-        let padding = ["", "======", "====", "===", "="][(extraCount / 8)]
+        let extraCount = (data.count % 5)
+        let padding = ["", "======", "====", "===", "="][extraCount]
 
-        let count = binary.count
-        binary += String(repeating: "0", count: 40 - extraCount)
+        let count = data.count
+        data += Array(repeating: 0, count: 5 - extraCount)
 
         for i in stride(from: 0, to: count, by: 5) {
-            s += toTable[binary[i..<(i + 5)]]!
+            s += toTable[(data[i + 0] & 0xF8) >> 3]!
+            s += toTable[((data[i + 0] & 0x07) << 2) + ((data[i + 1] & 0xC0) >> 6)]!
+
+            if i + 2 <= count {
+                s += toTable[(data[i + 1] & 0x3E) >> 1]!
+                s += toTable[((data[i + 1] & 0x01) << 4) + ((data[i + 2] & 0xF0) >> 4)]!
+            }
+            if i + 3 <= count {
+                s += toTable[((data[i + 2] & 0x0F) << 1) + ((data[i + 3] & 0x80) >> 7)]!
+            }
+            if i + 4 <= count {
+                s += toTable[(data[i + 3] & 0x7C) >> 2]!
+                s += toTable[((data[i + 3] & 0x03) << 3) + ((data[i + 4] & 0xF8) >> 5)]!
+            }
+            if i + 5 <= count {
+                s += toTable[(data[i + 4] & 0x1F)]!
+            }
         }
 
         return s + padding
     }
 
     public static func decode(_ string: String) -> [UInt8] {
-        let paddings = ["=", "===", "====", "======"]
-        var paddingCount = 0
+        var result = [UInt8]()
 
-        for i in paddings.indices {
-            if string.hasSuffix(paddings[i]) { paddingCount = i + 1}
+        for i in stride(from: 0, to: string.count, by: 8) {
+            let start = string.index(string.startIndex, offsetBy: i)
+            let end = string.index(start, offsetBy: min(string.count - i, 8))
+
+            let s = string[start ..< end]
+
+            let bytes = s.map { fromTable[String($0)]! }
+
+            let paddings = ["=", "===", "====", "======"]
+            var keepCount = 5
+
+            for i in paddings.indices {
+                if s.hasSuffix(paddings[i]) { keepCount -= 1}
+            }
+
+            result.append((bytes[0] << 3) + (bytes[1] >> 2))
+
+            if keepCount > 1 {
+                result.append((bytes[1] & 0x03) << 6 + (bytes[2] << 1) + bytes[3] >> 4)
+            }
+
+            if keepCount > 2 {
+                result.append((bytes[3] & 0x0F) << 4 + (bytes[4] >> 1))
+            }
+
+            if keepCount > 3 {
+                result.append(bytes[4] << 7 + (bytes[5] << 2) + (bytes[6] & 0x18) >> 3)
+            }
+
+            if keepCount > 4 {
+                result.append((bytes[6] & 0x07) << 5 + bytes[7])
+            }
         }
 
-        let binary: String = string.reduce("") { $0 + fromTable[String($1)]! }
-
-        var d = [UInt8]()
-
-        for i: Int in stride(from: 0, to: binary.utf8.count - paddingCount * 8, by: 8) {
-            let s: String = binary[i..<(i + 8)]
-            d.append(UInt8(s, radix: 2)!)
-        }
-
-        return d
+        return result
     }
 }
 
-private let fromTable: [String: String] = [
-    "A": "00000", "B": "00001", "C": "00010", "D": "00011", "E": "00100",
-    "F": "00101", "G": "00110", "H": "00111", "I": "01000", "J": "01001",
-    "K": "01010", "L": "01011", "M": "01100", "N": "01101", "O": "01110",
-    "P": "01111", "Q": "10000", "R": "10001", "S": "10010", "T": "10011",
-    "U": "10100", "V": "10101", "W": "10110", "X": "10111", "Y": "11000",
-    "Z": "11001", "2": "11010", "3": "11011", "4": "11100", "5": "11101",
-    "6": "11110", "7": "11111",
+private let fromTable: [String: UInt8] = [
+    "A": 0b00000, "B": 0b00001, "C": 0b00010, "D": 0b00011, "E": 0b00100,
+    "F": 0b00101, "G": 0b00110, "H": 0b00111, "I": 0b01000, "J": 0b01001,
+    "K": 0b01010, "L": 0b01011, "M": 0b01100, "N": 0b01101, "O": 0b01110,
+    "P": 0b01111, "Q": 0b10000, "R": 0b10001, "S": 0b10010, "T": 0b10011,
+    "U": 0b10100, "V": 0b10101, "W": 0b10110, "X": 0b10111, "Y": 0b11000,
+    "Z": 0b11001, "2": 0b11010, "3": 0b11011, "4": 0b11100, "5": 0b11101,
+    "6": 0b11110, "7": 0b11111, "=": 0b00000,
 ]
 
-private let toTable: [String: String] = {
-    var t = [String: String]()
+private let toTable: [UInt8: String] = {
+    var t = [UInt8: String]()
 
     for (k, v) in fromTable { t[v] = k }
 
