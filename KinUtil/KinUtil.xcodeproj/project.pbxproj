@@ -12,10 +12,10 @@
 		8251CAB3208E005C00D0EBAA /* Observables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8251CAB2208E005C00D0EBAA /* Observables.swift */; };
 		8261EF2B2043DE3B001848CB /* PromiseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8261EF2A2043DE3B001848CB /* PromiseTests.swift */; };
 		8261EF3620446117001848CB /* String+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8261EF3520446117001848CB /* String+extensions.swift */; };
-		8261EF382044623F001848CB /* Data+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8261EF372044623F001848CB /* Data+extensions.swift */; };
-		82870755219753550031229D /* Array+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82870754219753550031229D /* Array+extensions.swift */; };
+		8261EF382044623F001848CB /* Sequences+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8261EF372044623F001848CB /* Sequences+extensions.swift */; };
+		82870755219753550031229D /* Miscellaneous+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82870754219753550031229D /* Miscellaneous+extensions.swift */; };
 		82BA2035204D84AA00396AE2 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F2FAB320430A4600E754BD /* Observable.swift */; };
-		82BA2036204D84AA00396AE2 /* Data+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8261EF372044623F001848CB /* Data+extensions.swift */; };
+		82BA2036204D84AA00396AE2 /* Sequences+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8261EF372044623F001848CB /* Sequences+extensions.swift */; };
 		82BA2037204D84AA00396AE2 /* String+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8261EF3520446117001848CB /* String+extensions.swift */; };
 		82BA2038204D84AA00396AE2 /* Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F2FAB220430A4600E754BD /* Promise.swift */; };
 		82BA203B204D84AA00396AE2 /* KinUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 82F2FA9A204309E500E754BD /* KinUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -43,8 +43,8 @@
 		8251CAB2208E005C00D0EBAA /* Observables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observables.swift; sourceTree = "<group>"; };
 		8261EF2A2043DE3B001848CB /* PromiseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromiseTests.swift; sourceTree = "<group>"; };
 		8261EF3520446117001848CB /* String+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+extensions.swift"; sourceTree = "<group>"; };
-		8261EF372044623F001848CB /* Data+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+extensions.swift"; sourceTree = "<group>"; };
-		82870754219753550031229D /* Array+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+extensions.swift"; sourceTree = "<group>"; };
+		8261EF372044623F001848CB /* Sequences+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequences+extensions.swift"; sourceTree = "<group>"; };
+		82870754219753550031229D /* Miscellaneous+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Miscellaneous+extensions.swift"; sourceTree = "<group>"; };
 		82BA2040204D84AA00396AE2 /* KinUtil.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = KinUtil.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		82BA2041204D84AB00396AE2 /* KinUtil-macos-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "KinUtil-macos-Info.plist"; path = "/Users/avi/Projects/kin-core-ios/KinSDK/StellarKit/kin-util-ios/KinUtil/KinUtil-macos-Info.plist"; sourceTree = "<absolute>"; };
 		82C07AD6223BF7D100AC90BC /* Base32.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Base32.swift; sourceTree = "<group>"; };
@@ -88,8 +88,8 @@
 			isa = PBXGroup;
 			children = (
 				8261EF3520446117001848CB /* String+extensions.swift */,
-				8261EF372044623F001848CB /* Data+extensions.swift */,
-				82870754219753550031229D /* Array+extensions.swift */,
+				8261EF372044623F001848CB /* Sequences+extensions.swift */,
+				82870754219753550031229D /* Miscellaneous+extensions.swift */,
 			);
 			path = extensions;
 			sourceTree = "<group>";
@@ -298,7 +298,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				82BA2035204D84AA00396AE2 /* Observable.swift in Sources */,
-				82BA2036204D84AA00396AE2 /* Data+extensions.swift in Sources */,
+				82BA2036204D84AA00396AE2 /* Sequences+extensions.swift in Sources */,
 				82BA2037204D84AA00396AE2 /* String+extensions.swift in Sources */,
 				82BA2038204D84AA00396AE2 /* Promise.swift in Sources */,
 			);
@@ -311,10 +311,10 @@
 				8251CAB3208E005C00D0EBAA /* Observables.swift in Sources */,
 				82321F6020518B2300C5D557 /* Utility.swift in Sources */,
 				82321F6220526B6500C5D557 /* Curry.swift in Sources */,
-				82870755219753550031229D /* Array+extensions.swift in Sources */,
+				82870755219753550031229D /* Miscellaneous+extensions.swift in Sources */,
 				82C07AD7223BF7D100AC90BC /* Base32.swift in Sources */,
 				82F2FAB520430A4600E754BD /* Observable.swift in Sources */,
-				8261EF382044623F001848CB /* Data+extensions.swift in Sources */,
+				8261EF382044623F001848CB /* Sequences+extensions.swift in Sources */,
 				8261EF3620446117001848CB /* String+extensions.swift in Sources */,
 				82F2FAB420430A4600E754BD /* Promise.swift in Sources */,
 			);

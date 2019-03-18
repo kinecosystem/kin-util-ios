@@ -1,5 +1,5 @@
 //
-//  Data+extensions.swift
+//  Sequences+extensions.swift
 //  KinUtil
 //
 //  Created by Kin Foundation.
