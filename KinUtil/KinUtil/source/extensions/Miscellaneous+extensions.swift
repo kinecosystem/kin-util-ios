@@ -3,7 +3,7 @@
 // KinUtil
 //
 // Created by Kin Foundation.
-// Copyright © 2018 Kin Foundation. All rights reserved.
+// Copyright © 2019 Kin Foundation. All rights reserved.
 //
 
 import Foundation
@@ -21,15 +21,14 @@ extension FixedWidthInteger {
         return self[bit, bit]
     }
 
-    subscript(from: Int, to: Int) -> Self {
-        precondition(from < Self.bitWidth, "from out of range")
-        precondition(to < Self.bitWidth, "to out of range")
-        precondition(from <= to, "from greater than to")
+    subscript(start: Int, end: Int) -> Self {
+        precondition(start < Self.bitWidth, "start out of range")
+        precondition(end < Self.bitWidth, "end out of range")
+        precondition(start <= end, "start greater than end")
 
         var mask = 0 as Self
-        for _ in 0 ..< (to + 1) - from { mask = (mask << 1) | 1 }
-        mask = mask << from
+        for i in start ... end { mask |= 1 << i }
 
-        return (self & mask) >> from
+        return (self & mask) >> start
     }
 }
