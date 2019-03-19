@@ -64,7 +64,7 @@ public enum Base32 {
 
             { bytes[i + 3][0, 3] << 4 + bytes[i + 4][1, 4] },
 
-            { bytes[i + 4][0] << 7 + bytes[5] << 2 + bytes[i + 6][3, 4] },
+            { bytes[i + 4][0] << 7 + bytes[i + 5] << 2 + bytes[i + 6][3, 4] },
 
             { bytes[i + 6][0, 2] << 5 + bytes[i + 7] },
             ]
