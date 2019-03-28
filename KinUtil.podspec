@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name        = "KinUtil"
-  s.version     = "0.0.17"
+  s.version     = "0.0.18"
   s.license     = { :type => "MIT" }
   s.homepage    = "https://github.com/kinecosystem/kin-util-ios.git"
   s.summary     = "A framework containing utility classes used by Kin SDKs."
@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.source      = { :git => "https://github.com/kinecosystem/kin-util-ios.git", :tag => s.version, :submodules => false }
 
   s.ios.deployment_target = "8.0"
-  s.swift_version = "5.0"
+  s.swift_version = "4.2"
 
   s.source_files = 'KinUtil/KinUtil/source/**/*.swift'
 end
