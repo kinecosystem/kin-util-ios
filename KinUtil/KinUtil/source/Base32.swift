@@ -44,12 +44,15 @@ public enum Base32 {
     }
 
     public static func decode(_ string: String) -> [UInt8] {
-        precondition(string.count % 8 == 0, "count must be a multiple of 8")
+        precondition(string.count % 8 == 0, "string length must be a multiple of 8")
 
         var result = [UInt8]()
 
         let string = string.map { $0 }
-        let bytes = string.map { fromTable[$0] ?? 0 }
+        let bytes: [UInt8] = string.map {
+            guard let v = fromTable[$0] else { fatalError("invalid character") }
+            return v
+        }
 
         let paddingCounts = [0, 1, 3, 4, 6]
         let paddingCount = bytes.count - (string.firstIndex(of: "=") ?? bytes.count)
