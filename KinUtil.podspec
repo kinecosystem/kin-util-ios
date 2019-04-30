@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name        = "KinUtil"
   s.version     = "0.0.20"
-  s.license     = { :type => "MIT" }
+  s.license     = { :type => 'Kin Ecosystem SDK License', :file => 'LICENSE.pdf' }
   s.homepage    = "https://github.com/kinecosystem/kin-util-ios.git"
   s.summary     = "A framework containing utility classes used by Kin SDKs."
   s.description = <<-DESC
