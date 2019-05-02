@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		82039EA7227A0778002166DF /* ObservableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82039EA6227A0778002166DF /* ObservableTests.swift */; };
 		82321F6020518B2300C5D557 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82321F5F20518B2300C5D557 /* Utility.swift */; };
 		82321F6220526B6500C5D557 /* Curry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82321F6120526B6500C5D557 /* Curry.swift */; };
 		8251CAB3208E005C00D0EBAA /* Observables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8251CAB2208E005C00D0EBAA /* Observables.swift */; };
@@ -14,7 +15,7 @@
 		8261EF3620446117001848CB /* String+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8261EF3520446117001848CB /* String+extensions.swift */; };
 		8261EF382044623F001848CB /* Sequences+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8261EF372044623F001848CB /* Sequences+extensions.swift */; };
 		82870755219753550031229D /* Miscellaneous+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82870754219753550031229D /* Miscellaneous+extensions.swift */; };
-		82BA2035204D84AA00396AE2 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F2FAB320430A4600E754BD /* Observable.swift */; };
+		82BA2035204D84AA00396AE2 /* SourceObservable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F2FAB320430A4600E754BD /* SourceObservable.swift */; };
 		82BA2036204D84AA00396AE2 /* Sequences+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8261EF372044623F001848CB /* Sequences+extensions.swift */; };
 		82BA2037204D84AA00396AE2 /* String+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8261EF3520446117001848CB /* String+extensions.swift */; };
 		82BA2038204D84AA00396AE2 /* Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F2FAB220430A4600E754BD /* Promise.swift */; };
@@ -24,7 +25,7 @@
 		82F2FAA6204309E500E754BD /* KinUtilTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F2FAA5204309E500E754BD /* KinUtilTests.swift */; };
 		82F2FAA8204309E500E754BD /* KinUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 82F2FA9A204309E500E754BD /* KinUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		82F2FAB420430A4600E754BD /* Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F2FAB220430A4600E754BD /* Promise.swift */; };
-		82F2FAB520430A4600E754BD /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F2FAB320430A4600E754BD /* Observable.swift */; };
+		82F2FAB520430A4600E754BD /* SourceObservable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F2FAB320430A4600E754BD /* SourceObservable.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +39,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		82039EA6227A0778002166DF /* ObservableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservableTests.swift; sourceTree = "<group>"; };
 		82321F5F20518B2300C5D557 /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
 		82321F6120526B6500C5D557 /* Curry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Curry.swift; sourceTree = "<group>"; };
 		8251CAB2208E005C00D0EBAA /* Observables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observables.swift; sourceTree = "<group>"; };
@@ -55,7 +57,7 @@
 		82F2FAA5204309E500E754BD /* KinUtilTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KinUtilTests.swift; sourceTree = "<group>"; };
 		82F2FAA7204309E500E754BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		82F2FAB220430A4600E754BD /* Promise.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Promise.swift; sourceTree = "<group>"; };
-		82F2FAB320430A4600E754BD /* Observable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
+		82F2FAB320430A4600E754BD /* SourceObservable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SourceObservable.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,8 +129,9 @@
 		82F2FAA4204309E500E754BD /* KinUtilTests */ = {
 			isa = PBXGroup;
 			children = (
-				8261EF2A2043DE3B001848CB /* PromiseTests.swift */,
 				82F2FAA5204309E500E754BD /* KinUtilTests.swift */,
+				8261EF2A2043DE3B001848CB /* PromiseTests.swift */,
+				82039EA6227A0778002166DF /* ObservableTests.swift */,
 				82F2FAA7204309E500E754BD /* Info.plist */,
 			);
 			path = KinUtilTests;
@@ -139,7 +142,7 @@
 			children = (
 				8261EF34204460B8001848CB /* extensions */,
 				82321F6120526B6500C5D557 /* Curry.swift */,
-				82F2FAB320430A4600E754BD /* Observable.swift */,
+				82F2FAB320430A4600E754BD /* SourceObservable.swift */,
 				82F2FAB220430A4600E754BD /* Promise.swift */,
 				82321F5F20518B2300C5D557 /* Utility.swift */,
 				8251CAB2208E005C00D0EBAA /* Observables.swift */,
@@ -297,7 +300,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				82BA2035204D84AA00396AE2 /* Observable.swift in Sources */,
+				82BA2035204D84AA00396AE2 /* SourceObservable.swift in Sources */,
 				82BA2036204D84AA00396AE2 /* Sequences+extensions.swift in Sources */,
 				82BA2037204D84AA00396AE2 /* String+extensions.swift in Sources */,
 				82BA2038204D84AA00396AE2 /* Promise.swift in Sources */,
@@ -313,7 +316,7 @@
 				82321F6220526B6500C5D557 /* Curry.swift in Sources */,
 				82870755219753550031229D /* Miscellaneous+extensions.swift in Sources */,
 				82C07AD7223BF7D100AC90BC /* Base32.swift in Sources */,
-				82F2FAB520430A4600E754BD /* Observable.swift in Sources */,
+				82F2FAB520430A4600E754BD /* SourceObservable.swift in Sources */,
 				8261EF382044623F001848CB /* Sequences+extensions.swift in Sources */,
 				8261EF3620446117001848CB /* String+extensions.swift in Sources */,
 				82F2FAB420430A4600E754BD /* Promise.swift in Sources */,
@@ -325,6 +328,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				82F2FAA6204309E500E754BD /* KinUtilTests.swift in Sources */,
+				82039EA7227A0778002166DF /* ObservableTests.swift in Sources */,
 				8261EF2B2043DE3B001848CB /* PromiseTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

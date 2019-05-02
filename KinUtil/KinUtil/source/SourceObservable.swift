@@ -13,7 +13,7 @@ public protocol Unlinkable {
     func unlink()
 }
 
-protocol UnlinkableObserver: Unlinkable {
+private protocol UnlinkableObserver: Unlinkable {
     var observerCount: Int { get }
     var parent: UnlinkableObserver? { get }
     func add(to linkBag: LinkBag)
@@ -82,34 +82,17 @@ private struct Observer<Value> {
     }
 }
 
-/**
- An `Observable` is an object which emits events (values) to its observers.  The one who creates the
- observable issues calls to `next(_:)` to emit new values.  Values submitted are not emitted until
- the first observer registers.  Subsequent observers will only see new events.
- ---
- ## Observing
- An interested party begins observing by calling `on(_, next:)`.  This method returns an observable
- which emits the same value received by the next-event handler.  This allows chaining observables.
-
- ## Operators
- `Observable`s have several operators, which filter or transform the received value,
- as dictated by the operator.  The operator methods return an observable, to allow operators to be chained.
-
- ## Memory management
- `Observable`s only keep a strong reference to the `Observable` instance they
- are observing.  It is thus necessary to keep a strong reference to the last link in an observation chain.
- */
 public class Observable<Value> {
-    private enum State {
+    fileprivate enum State {
         case open
         case complete
         case error
     }
 
-    private var observers = [Observer<Value>]()
+    fileprivate var observers = [Observer<Value>]()
     internal var buffer = [Value]()
-    private var state = State.open
-    var parent: UnlinkableObserver?
+    fileprivate var state = State.open
+    fileprivate var parent: UnlinkableObserver?
 
     var observerCount: Int {
         return observers.count
@@ -151,12 +134,7 @@ public class Observable<Value> {
         return self
     }
 
-    /**
-     Emit a new value to observers.  If no observers are registered, the value is buffered.
-
-     - parameter value: The value to emit.
-     */
-    public func next(_ value: Value) {
+    internal func next(_ value: Value) {
         guard state == .open else {
             return
         }
@@ -169,7 +147,7 @@ public class Observable<Value> {
         }
     }
 
-    public func error(_ error: Error) {
+    internal func error(_ error: Error) {
         guard state == .open else {
             return
         }
@@ -179,7 +157,7 @@ public class Observable<Value> {
         observers.forEach { $0.error(error) }
     }
 
-    public func finish() {
+    internal func finish() {
         guard state == .open else {
             return
         }
@@ -188,8 +166,46 @@ public class Observable<Value> {
 
         observers.forEach { $0.finish() }
     }
+}
+
+/**
+ An `Observable` is an object which emits events (values) to its observers.  The one who creates the
+ observable issues calls to `next(_:)` to emit new values.  Values submitted are not emitted until
+ the first observer registers.  Subsequent observers will only see new events.
+ ---
+ ## Observing
+ An interested party begins observing by calling `on(_, next:)`.  This method returns an observable
+ which emits the same value received by the next-event handler.  This allows chaining observables.
+
+ ## Operators
+ `Observable`s have several operators, which filter or transform the received value,
+ as dictated by the operator.  The operator methods return an observable, to allow operators to be chained.
+
+ ## Memory management
+ `Observable`s only keep a strong reference to the `Observable` instance they
+ are observing.  It is thus necessary to keep a strong reference to the last link in an observation chain.
+ */
+public class SourceObservable<Value>: Observable<Value> {
+    /**
+     Emit a new value to observers.  If no observers are registered, the value is buffered.
+
+     - parameter value: The value to emit.
+     */
+    public override func next(_ value: Value) {
+        super.next(value)
+    }
+
+    public override func error(_ error: Error) {
+        super.error(error)
+    }
+
+    public override func finish() {
+        super.finish()
+    }
 
     public init(_ value: Value? = nil) {
+        super.init()
+
         if let value = value {
             next(value)
         }
@@ -222,10 +238,10 @@ extension Observable {
      the oldest values are discarded as new values are received.
      */
     public func accumulate(limit: Int) -> Observable<[Value]> {
-        var buffer = [Value]()
-
         let observable = Observable<[Value]>()
         let wb = WeakBox(observable: observable)
+
+        var buffer = [Value]()
 
         observable.parent = on(next: { (value) in
             buffer.append(value)
@@ -244,7 +260,9 @@ extension Observable {
 
      - parameter other: The observable whose emitted values will be combined with the receiver's.
      */
-    public func combine<OtherValue>(with other: Observable<OtherValue>) -> Observable<(Value?, OtherValue?)> {
+    public func combine<OtherValue>(with other: Observable<OtherValue>)
+        -> Observable<(Value?, OtherValue?)>
+    {
         let observable = Observable<(Value?, OtherValue?)>()
         let wb = WeakBox(observable: observable)
 
@@ -310,10 +328,10 @@ extension Observable {
         let wb = WeakBox(observable: observable)
 
         observable.parent =
-            on(next: { (value) -> Void in
-                print("\(identifier ?? "Observable"): DEBUG: \(value)")
+            on(next: {
+                print("\(identifier ?? "Observable"): DEBUG: \($0)")
 
-                wb.observable?.next(value)
+                wb.observable?.next($0)
             })
 
         return observable
@@ -330,10 +348,8 @@ extension Observable {
         let wb = WeakBox(observable: observable)
 
         observable.parent =
-            on(next: { value in
-                if handler(value) {
-                    wb.observable?.next(value)
-                }
+            on(next: {
+                if handler($0) { wb.observable?.next($0) }
             })
 
         return observable
@@ -350,10 +366,8 @@ extension Observable {
         let wb = WeakBox(observable: observable)
 
         observable.parent =
-            on(next: { value in
-                guard let value = handler(value) else {
-                    return
-                }
+            on(next: {
+                guard let value = handler($0) else { return }
 
                 wb.observable?.next(value)
             })
@@ -371,16 +385,13 @@ extension Observable {
         let observable = Observable<NewValue>()
         let wb = WeakBox(observable: observable)
 
-        observable.parent =
-            on(next: { value in
-                wb.observable?.next(handler(value))
-            })
+        observable.parent = on(next: { wb.observable?.next(handler($0)) })
 
         return observable
     }
 
     /**
-     The `skip` operator swallows the first X observed values.
+     The `skip` operator swallows the first `count` observed values.
 
      - parameter count: The number of events to swallow before emitting values.
      */
@@ -391,13 +402,10 @@ extension Observable {
         var skipCount = count
 
         observable.parent =
-            on(next: { value in
-                if skipCount == 0 {
-                    wb.observable?.next(value)
-                }
-                else {
-                    skipCount -= 1
-                }
+            on(next: {
+                guard skipCount == 0 else { skipCount -= 1; return }
+
+                wb.observable?.next($0)
             })
 
         return observable

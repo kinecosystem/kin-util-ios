@@ -14,7 +14,9 @@ public final class StatefulObserver<Value>: Observable<Value> {
 
     @discardableResult
     override public func on(queue: DispatchQueue? = nil,
-                            next: @escaping (Value) -> Void) -> Observable<Value> {
+                            next: @escaping (Value) -> Void)
+        -> Observable<Value>
+    {
         let wasZero = buffer.isEmpty
 
         super.on(queue: queue, next: next)
@@ -39,7 +41,8 @@ public final class NotificationObserver: Observable<Notification> {
     init(name: Notification.Name,
          object: Any? = nil,
          center: NotificationCenter = .default,
-         queue: OperationQueue? = nil) {
+         queue: OperationQueue? = nil)
+    {
         token = NSObject()
 
         super.init()
